@@ -1,0 +1,68 @@
+<div class="header">
+    <div class="wrap">
+        <div class="logo">
+            <a href="index.html"><img src="images/logo.png" title="PArtesanato"/></a>
+        </div>
+        <div class="nav-icon" title="Menu">
+            <a id="menu" class="pointer"><span></span></a>
+        </div>
+        <div id="menu_box" class="menu_box">
+            <div class="menu_box_content">
+                <div class="menu_box_content_center">
+                    <div class="form_content">
+                        <div class="menu_box_list">
+                            <ul>
+                                <li><a href="index.html"><span>Home</span></a></li>
+                                <li class="is_auth"><a href="posts-create.html"><span>New Post</span></a></li>
+                                <li class="is_admin"><a
+                                        href="index.html?waiting-approval"><span>Posts Waiting Approval</span></a></li>
+                                <li><a href="about.html"><span>About</span></a></li>
+                                <div class="clear"></div>
+                            </ul>
+                        </div>
+                        <a id="menu_box_close" class="pointer menu_box_close"><i class="fas fa-times-circle fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="top-searchbar" style="display: none;">
+            <div id="search_bar" title="Search By">
+                <input type="text"/><input id="search_button" type="submit" value=""/>
+            </div>
+            <select id="order_select" title="Order By">
+                <option value="title">Title - Ascending</option>
+                <option value="-title">Title - Descending</option>
+                <option value="user__username">User - Ascending</option>
+                <option value="-user__username">User - Descending</option>
+                <option value="likes">Likes - Ascending</option>
+                <option value="-likes">Likes - Descending</option>
+                <option value="dislikes">Dislikes - Ascending</option>
+                <option value="-dislikes">Dislikes - Descending</option>
+                <option value="datetime_created">Created Date - Ascending</option>
+                <option value="-datetime_created" selected>Created Date - Descending</option>
+                <option value="datetime_modified">Modified Date - Ascending</option>
+                <option value="-datetime_modified">Modified Date - Descending</option>
+            </select>
+        </div>
+        <div id="user_profile" class="userinfo" style="display: none;">
+            <div class="user">
+                <ul>
+                    <li><img title="avatar"/><a class="pointer"
+                                                onclick="document.getElementById('modal_profile').style.display='block'"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="user_account" class="userinfo">
+            <div class="user">
+                <ul>
+                    <li><a class="pointer"
+                           onclick="document.getElementById('modal_login').style.display='block'">Login</a></li>
+                    <li><a class="pointer" onclick="document.getElementById('modal_register').style.display='block'">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>

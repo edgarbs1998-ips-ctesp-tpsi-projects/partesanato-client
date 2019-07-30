@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="images/fav-icon.ico"/>
+
+    <noscript>
+        <p>Your browser does not support JavaScript!</p>
+        <p>In order to consume our website you need to enable JavaScript, we are sorry for the inconvenience.</p>
+    </noscript>
+
+    <!-- jQuery -->
+    <script type="application/javascript" src="vendor/jquery/jquery-3.3.1.min.js"></script>
+
+    <div class="templates" template="head"></div>
+
+    <div class="templates" template="scripts"></div>
+</head>
+<body>
+<!-- Header -->
+<div class="templates" template="header"></div>
+<!-- // Header -->
+
+<!-- Content -->
+<div class="content">
+    <div class="wrap">
+        <div id="spinner">
+            <div class="templates" template="spinner"></div>
+        </div>
+        <div class="single-page" style="display: none;">
+            <div class="single-page-artical">
+                <div class="artical-content">
+                    <div class="fotorama" data-width="100%" data-ratio="4/3" data-nav="thumbs" data-thumbwidth="128"
+                         data-thumbheight="128" data-allowfullscreen="true" data-keyboard="true"
+                         data-auto="false"></div>
+                    <ul class="post_menu is_admin is_owner_post">
+                        <button id="post_approve" class="approvebtn" type="button">Approve Post</button>
+                        <li><a id="post_menu_edit" class="pointer" onclick="$('#modal_post_edit').show();"><i
+                                class="fas fa-edit"></i></a></li>
+                        <li><a id="post_menu_delete" class="pointer"><i class="fas fa-trash-alt"></i></a></li>
+                    </ul>
+                    <h3><a id="post_title" class="pointer"></a></h3>
+                    <p id="post_approve_label">Waiting Approval!</p>
+                    <p id="post_description"></p>
+                </div>
+                <div class="artical_details_left">
+                    <ul>
+                        <li><i class="far fa-user fa-lg"></i> <a id="post_user" class="pointer"></a></li>
+                        <li><i class="far fa-clock fa-lg"></i> <span id="post_date_created"></span></li>
+                        <li><i class="far fa-edit fa-lg"></i> <span id="post_date_modified"></span></li>
+                        <li><i class="far fa-comments fa-lg"></i> <span id="post_comments_count"></span></li>
+                    </ul>
+                </div>
+                <div class="artical_details_right">
+                    <ul>
+                        <li><a id="post_dislikes" class="pointer"><i class="fas fa-thumbs-down fa-lg"></i> <span></span></a>
+                        </li>
+                        <li><a id="post_likes" class="pointer"><i class="fas fa-thumbs-up fa-lg"></i> <span></span></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <!-- Comments section -->
+            <div class="comment-section">
+                <div class="grids_of_2">
+                    <h2 class="comments">Comments</h2>
+                    <div class="comment-orderbar">
+                        <select id="order_comment_select" title="Order By">
+                            <option value="user__username">User - Ascending</option>
+                            <option value="-user__username">User - Descending</option>
+                            <option value="datetime_created">Created Date - Ascending</option>
+                            <option value="-datetime_created" selected>Created Date - Descending</option>
+                            <option value="datetime_modified">Modified Date - Ascending</option>
+                            <option value="-datetime_modified">Modified Date - Descending</option>
+                        </select>
+                    </div>
+                    <div id="spinner2">
+                        <div class="templates" template="spinner"></div>
+                    </div>
+                    <div id="comments_list" style="display: none;"></div>
+                    <div class="artical-commentbox is_auth">
+                        <h2>Leave a Comment</h2>
+                        <div class="table-form">
+                            <ul id="form-status" class="list3 submit_result"></ul>
+                            <form id="comment-form">
+                                <div>
+                                    <label for="new_comment">Your Comment<span>*</span></label>
+                                    <textarea id="new_comment" name="comment"> </textarea>
+                                </div>
+                                <input id="comment_submit" type="submit" value="Submit"/>
+                            </form>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- // Comments section -->
+        </div>
+    </div>
+</div>
+<!-- // Content -->
+
+<!-- Modals -->
+<div class="templates" template="modals"></div>
+<!-- // Modals -->
+
+<!-- Load Templates -->
+<script>
+    $(function () {
+        $('div.templates').each(function () {
+            $(this).load('templates/' + $(this).attr('template') + '.html');
+        });
+    });
+</script>
+<!-- // Load Templates -->
+
+<!-- Page Fragments -->
+<script id="comment_tile" type="text/html">
+    <div class="grid1_of_2">
+        <div class="grid_img">
+            <img src="{{comment_user_gravatar}}" alt="">
+        </div>
+        <div class="grid_text">
+            <ul class="comment_menu is_admin is_owner_comment" commentid="{{comment_id}}">
+                <li><a class="comment_menu_edit pointer" commentid="{{comment_id}}"><i
+                        class="fas fa-edit fa-sm"></i></a></li>
+                <li><a class="comment_menu_delete pointer" commentid="{{comment_id}}"><i
+                        class="fas fa-trash-alt fa-sm"></i></a></li>
+            </ul>
+            <h4 class="style1 list"><a class="user_profile_link pointer" userid="{{comment_user_id}}"><i
+                    class="far fa-user"></i> {{comment_username}}</a></h4>
+            <h3 class="style"><i class="far fa-clock"></i> {{comment_date_created}}<br/>
+                <i class="far fa-edit"></i> {{comment_date_modified}}</h3>
+            <p class="para top" commentid="{{comment_id}}">{{comment}}</p>
+            <div class="table-form edit-comment" commentid="{{comment_id}}" style="display: none;">
+                <ul class="list3 submit_result"></ul>
+                <form method="post">
+                    <div>
+                        <textarea name="comment" title="Comment">{{comment}}</textarea>
+                    </div>
+                    <input type="submit" value="Save" commentid="{{comment_id}}">
+                </form>
+            </div>
+            <hr>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>
+<!-- // Page Fragments -->
+
+<!-- Page Scripts -->
+<script>
+    var alreadyExecuted = false;
+
+    $(document).ajaxStop(function () {
+        setTimeout(pageScripts, 1000);
+    });
+
+    function pageScripts() {
+        if (alreadyExecuted) {
+            return;
+        }
+        alreadyExecuted = true;
+
+        // Variables
+        var commentOrder = '-datetime_created',
+            singlePage = $('.single-page'),
+            commentsList = $('#comments_list'),
+            spinner = $('#spinner'),
+            spinner2 = $('#spinner2'),
+            apiURL = API_URL + 'posts/' + getUrlParameter('post') + '/';
+
+        /* Handle Envents */
+
+        // Show User Profile
+        $(document).on('click', '.user_profile_link', function (e) {
+            e.preventDefault();
+
+            requestUserProfile($(this).attr('userid'));
+        });
+        $("#post_user").click(function (e) {
+            e.preventDefault();
+
+            requestUserProfile($(this).attr('userid'));
+        });
+
+        // Handle Post Remove
+        $("#post_menu_delete").click(function (e) {
+            e.preventDefault();
+
+            if (!confirm("Are you sure you want to delete the post?")) {
+                return;
+            }
+
+            $.ajax({
+                url: apiURL,
+                method: 'DELETE',
+                dataType: 'json',
+                data: {},
+                success: function (data, textStatus, jqXHR) {
+                    var msg = 'The post has been removed!';
+                    displaySubmitSuccess(msg);
+
+                    window.location.replace("index.html");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        // Handle Approve Post
+        $("#post_approve").click(function (e) {
+            e.preventDefault();
+
+            if (!confirm("Are you sure you want to approve the post? You can't go back!")) {
+                return false;
+            }
+
+            var postData = {
+                approved: true
+            };
+
+            $.ajax({
+                url: apiURL,
+                method: 'PATCH',
+                dataType: 'json',
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    var msg = 'The post has been approved!';
+                    displaySubmitSuccess(msg);
+
+                    location.reload();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        // Handle Post Like
+        $("#post_likes").click(function (e) {
+            e.preventDefault();
+
+            if (!gUser) {
+                $("#modal_login").show();
+                return;
+            }
+
+            $.ajax({
+                url: apiURL + 'likes/',
+                method: 'POST',
+                dataType: 'json',
+                data: {},
+                success: function (data, textStatus, jqXHR) {
+                    var postLikes = $("#post_likes").find("span");
+
+                    postLikes.html(parseInt(postLikes.html()) + 1);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        // Handle Post Dislike
+        $("#post_dislikes").click(function (e) {
+            e.preventDefault();
+
+            if (!gUser) {
+                $("#modal_login").show();
+                return;
+            }
+
+            $.ajax({
+                url: apiURL + 'dislikes/',
+                method: 'POST',
+                dataType: 'json',
+                data: {},
+                success: function (data, textStatus, jqXHR) {
+                    var postDislikes = $("#post_dislikes").find("span");
+
+                    postDislikes.html(parseInt(postDislikes.html()) + 1);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        // Handle Comment Submit
+        $("#comment_submit").click(function (e) {
+            e.preventDefault();
+
+            var submitResult = $("#form-status");
+            var commentData = {
+                comment: $('#new_comment').val()
+            };
+
+            $.ajax({
+                url: apiURL + 'comments/',
+                method: 'POST',
+                dataType: 'json',
+                data: commentData,
+                success: function (data, textStatus, jqXHR) {
+                    $('#new_comment').val('');
+
+                    var msg = 'Comment created with success!';
+                    displaySubmitSuccess(msg, submitResult);
+
+                    loadComments();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON, submitResult);
+                }
+            });
+        });
+
+        // Handle Comment Remove
+        $(document).on('click', '.comment_menu_delete', function (e) {
+            e.preventDefault();
+
+            if (!confirm("Are you sure you want to delete the comment?")) {
+                return false;
+            }
+
+            $.ajax({
+                url: apiURL + 'comments/' + $(this).attr('commentid') + "/",
+                method: 'DELETE',
+                dataType: 'json',
+                data: {},
+                success: function (data, textStatus, jqXHR) {
+                    loadComments();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON);
+                }
+            });
+        });
+
+        // Handle Comment Update Button
+        $(document).on('click', '.comment_menu_edit', function (e) {
+            e.preventDefault();
+
+            var commentid = $(this).attr('commentid');
+            var commentText = $('.grid_text p[commentid=' + commentid + ']'),
+                commentForm = $('.table-form[commentid=' + commentid + ']');
+
+            if (commentForm.css('display') === 'none') {
+                commentText.fadeOut(function () {
+                    commentForm.fadeIn();
+                });
+            } else {
+                commentForm.fadeOut(function () {
+                    commentText.fadeIn();
+                });
+            }
+        });
+
+        // Handle Comment Update
+        $(document).on('click', '.edit-comment input[type=submit]', function (e) {
+            e.preventDefault();
+
+            var commentid = $(this).attr('commentid');
+            var editComment = $('.edit-comment[commentid=' + commentid + ']');
+            var submitResult = editComment.find('.submit_result');
+            var commentData = {
+                comment: editComment.find('form textarea[name=comment]').val()
+            };
+
+            $.ajax({
+                url: apiURL + 'comments/' + commentid + '/',
+                method: 'PATCH',
+                dataType: 'json',
+                data: commentData,
+                success: function (data, textStatus, jqXHR) {
+                    $('#new_comment').val('');
+
+                    loadComments();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON, submitResult);
+                }
+            });
+        });
+
+        // Load Thumbs
+        $('#post_edit_images').change(function (e) {
+            loadThumbs(e, $('#post_edit_images_list'));
+        });
+
+        // Handle Post Update
+        $("#post_edit_update").on('click', function (e) {
+            e.preventDefault();
+
+            var modalPostEdit = $('#modal_post_edit');
+            var submitResult = modalPostEdit.find('.submit_result');
+            var postData = {
+                title: $("#post_edit_title").val(),
+                description: $("#post_edit_description").val(),
+            };
+
+            $.ajax({
+                url: apiURL,
+                method: 'PATCH',
+                dataType: 'json',
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    uploadImages(data.id, $("#post_edit_images"));
+
+                    var msg = 'Post updated with success!';
+                    displaySubmitSuccess(msg);
+
+                    location.reload();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON, submitResult);
+                }
+            });
+        });
+
+        // Handle Post Image Remove
+        $(document).on('click', '.image-remove', function (e) {
+            e.preventDefault();
+
+            if (!confirm("Are you sure you want to delete the image?")) {
+                return false;
+            }
+
+            var imageDiv = $(this);
+            var imageid = imageDiv.attr("imageid");
+
+            // send ajax
+            $.ajax({
+                url: apiURL + "images/" + imageid + "/",
+                type: "DELETE",
+                dataType: 'json',
+                data: {},
+                success: function (data, textStatus, jqXHR) {
+                    imageDiv.remove();
+
+                    var msg = 'Image removed with success!';
+                    displaySubmitSuccess(msg);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON);
+                }
+            })
+        });
+
+        /* // Handle Events */
+
+        /* Load Post Data */
+
+        // Comments Order By
+        $('#order_comment_select').change(function () {
+            commentOrder = this.value;
+            loadComments();
+        });
+
+        /**
+         * Loads post from the API.
+         */
+        var loadData = function () {
+            singlePage.hide();
+            spinner.show();
+            commentsList.hide();
+            spinner2.show();
+
+            $.ajax({
+                url: apiURL,
+                method: 'GET',
+                dataType: 'json',
+                data: {},
+                success: onLoadData,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    if (jqXHR.statusText === 'error') {
+                        singlePage.html('Could not retrieve the post, please try again later!');
+                    } else {
+                        singlePage.html(textStatus);
+                    }
+
+                    spinner.hide();
+                    singlePage.show();
+                }
+            });
+        };
+
+        /**
+         * Receives data from the API, create post
+         */
+        var onLoadData = function (data, textStatus, jqXHR) {
+            gPosts = data;
+
+            var datetimeCreated = new Date(data.datetime_created);
+            var datetimeModified = new Date(data.datetime_modified);
+
+            var dateOptions = {
+                year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            };
+            var postCreatedDate = datetimeCreated.toLocaleTimeString("en-us", dateOptions);
+            var postModifiedDate = datetimeModified.toLocaleTimeString("en-us", dateOptions);
+
+            $('#post_title').html(data.title);
+            $('#post_description').html(data.description.replace(/(?:\r\n|\r|\n)/g, '<br />'));
+            $('#post_user').attr('userid', data.user.id).html(data.user.username);
+            $('#post_date_created').html(postCreatedDate);
+            $('#post_date_modified').html(postModifiedDate);
+            $('#post_likes').find('span').html(data.likes);
+            $('#post_dislikes').find('span').html(data.dislikes);
+            $('#post_comments_count').html(data.comments.length);
+
+            $('#post_edit_title').val(data.title);
+            $('#post_edit_description').val(data.description);
+
+            if (data.approved || !gUser.is_staff) {
+                $('#post_approve').hide();
+                $('#post_approve_label').hide();
+            }
+
+            // Retrieve and fill post comments.
+            gComments = data.comments;
+            var template = $('#comment_tile').html();
+            var html = '';
+            $.each(gComments, function (key, value) {
+                var datetimeCommentCreated = new Date(value.datetime_created);
+                var datetimeCommentModified = new Date(value.datetime_modified);
+
+                var dateOptions = {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                };
+                var commentCreatedDate = datetimeCommentCreated.toLocaleTimeString('en-us', dateOptions);
+                var commentModifiedDate = datetimeCommentModified.toLocaleTimeString('en-us', dateOptions);
+
+                var commentData = {
+                    comment_id: value.id,
+                    comment_url: value.url,
+                    comment_user_id: value.user.id,
+                    comment_username: value.user.username,
+                    comment_user_gravatar: value.user.gravatar,
+                    comment: value.comment,
+                    comment_date_created: commentCreatedDate,
+                    comment_date_modified: commentModifiedDate
+                };
+
+                html += Mustache.render(template, commentData);
+            });
+
+            // Add post comments to the page.
+            $('#comments_list').html(html);
+
+            // Retrieve and fill post images.
+            var imagesList = new Array();
+            var images = data.images;
+            var imageHtml = '';
+            $.each(images, function (key, value) {
+                imagesList.push({img: value.image});
+
+                imageHtml += '<div class="image-remove" imageid="' + value.id + '"><a style="cursor: pointer;"><img class="thumb" src="' + value.image + '" /></a><div class="edit"><i class="fas fa-trash-alt fa-lg"></i></div></div>';
+            });
+            $('.fotorama').fotorama({data: imagesList});
+            $('#post_edit_remove_images').html(imageHtml);
+
+            spinner.hide();
+            singlePage.show();
+            spinner2.hide();
+            commentsList.show();
+
+            handlePermissions();
+        };
+
+        /**
+         * Loads comments from the API.
+         */
+        var loadComments = function () {
+            commentsList.hide();
+            spinner2.show();
+
+            $.ajax({
+                url: apiURL + 'comments/',
+                method: 'GET',
+                dataType: 'json',
+                data: {ordering: commentOrder},
+                success: onLoadComments,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    commentsList.html(textStatus);
+
+                    spinner2.hide();
+                    commentsList.show();
+                }
+            });
+        };
+
+        /**
+         * Receives data from the API, creates post comments
+         */
+        var onLoadComments = function (data, textStatus, jqXHR) {
+            gComments = data.results;
+
+            var template = $('#comment_tile').html();
+            var html = '';
+            $.each(gComments, function (key, value) {
+                var datetimeCommentCreated = new Date(value.datetime_created);
+                var datetimeCommentModified = new Date(value.datetime_modified);
+
+                var dateOptions = {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                };
+                var commentCreatedDate = datetimeCommentCreated.toLocaleTimeString('en-us', dateOptions);
+                var commentModifiedDate = datetimeCommentModified.toLocaleTimeString('en-us', dateOptions);
+
+                var commentData = {
+                    comment_id: value.id,
+                    comment_url: value.url,
+                    comment_user_id: value.user.id,
+                    comment_username: value.user.username,
+                    comment_user_gravatar: value.user.gravatar,
+                    comment: value.comment,
+                    comment_date_created: commentCreatedDate,
+                    comment_date_modified: commentModifiedDate
+                };
+
+                html += Mustache.render(template, commentData);
+            });
+
+            // Add post comments to the page.
+            commentsList.html(html);
+
+            spinner2.hide();
+            commentsList.show();
+
+            handlePermissions();
+        };
+
+        // Load first data from the API.
+        loadData();
+
+        /* // Load Post Data */
+    }
+</script>
+<!-- // Page Scripts -->
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="images/fav-icon.ico"/>
+
+    <noscript>
+        <p>Your browser does not support JavaScript!</p>
+        <p>In order to consume our website you need to enable JavaScript, we are sorry for the inconvenience.</p>
+    </noscript>
+
+    <!-- jQuery -->
+    <script type="application/javascript" src="vendor/jquery/jquery-3.3.1.min.js"></script>
+
+    <div class="templates" template="head"></div>
+
+    <div class="templates" template="scripts"></div>
+</head>
+<body>
+<!-- Header -->
+<div class="templates" template="header"></div>
+<!-- // Header -->
+
+<!-- Content -->
+<div class="content">
+    <div class="wrap">
+        <div id="spinner">
+            <div class="templates" template="spinner"></div>
+        </div>
+        <div id="main" role="main">
+            <ul id="tiles"></ul>
+        </div>
+    </div>
+</div>
+<!-- // Content -->
+
+<!-- Modals -->
+<div class="templates" template="modals"></div>
+<!-- // Modals -->
+
+<!-- Load Templates -->
+<script>
+    $(function () {
+        $('div.templates').each(function () {
+            $(this).load('templates/' + $(this).attr('template') + '.html');
+        });
+    });
+</script>
+<!-- // Load Templates -->
+
+<!-- Page Fragments -->
+<script id="post-tile" type="text/html">
+    <li onclick="location.href='posts-detail.html?post={{post_id}}';">
+        <img src="{{post_image}}" width="280">
+        <div class="post-info">
+            <div class="post-basic-info">
+                <h3><a href="posts-detail.html?post={{post_id}}">{{post_title}}</a></h3>
+                <span style="color: red;">{{post_approved}}</span>
+                <span><i class="far fa-clock"></i> {{post_date_created}}</span>
+                <span><i class="far fa-edit"></i> {{post_date_modified}}</span>
+                <span><i class="far fa-user"></i> {{post_username}}</span>
+                <p>{{post_description}}</p>
+            </div>
+            <div class="post_info_detail">
+                <div class="post_info_detail_left">
+                    <i class="fas fa-comments fa-lg"></i> {{post_comments_count}}
+                </div>
+                <div class="post_info_detail_right">
+                    <i class="fas fa-thumbs-up fa-lg"></i> {{post_likes}}
+                </div>
+                <div class="post_info_detail_right">
+                    <i class="fas fa-thumbs-down fa-lg"></i> {{post_dislikes}}
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </li>
+</script>
+<!-- // Page Fragments -->
+
+<!-- Page Scripts -->
+<script>
+    var alreadyExecuted = false;
+
+    $(document).ajaxStop(function () {
+        setTimeout(pageScripts, 1000);
+    });
+
+    function pageScripts() {
+        if (alreadyExecuted) {
+            return;
+        }
+        alreadyExecuted = true;
+
+        // Display Search Bar
+        displaySearchBar();
+
+        /* Load Data Tiles */
+
+        // Variables
+        var handler = null,
+            page = 1,
+            isLoading = false,
+            search = '',
+            order = '-datetime_created',
+            spinner = $('#spinner'),
+            tiles = $('#tiles');
+
+        // Prepare layout options.
+        var wookmarkOptions = {
+            autoResize: true, // This will auto-update the layout when the browser window is resized.
+            container: tiles, // Optional, used for some extra CSS styling
+            offset: 20, // Optional, the distance between grid items
+            itemWidth: 280 // Optional, the width of a grid item
+        };
+
+        // Search By
+        $("#search_button").click(function (e) {
+            e.preventDefault();
+
+            makeSearch();
+        });
+        $("#search_bar").find("input[type=text]").on('keypress', function (e) {
+            if (e.which === 13) {
+                makeSearch();
+            }
+        });
+
+        var makeSearch = function () {
+            tiles.html("");
+            page = 1;
+
+            search = $("#search_bar").find("input[type=text]").val();
+            loadData();
+        };
+
+        // Order By
+        $("#order_select").change(function (e) {
+            e.preventDefault();
+
+            tiles.html("");
+            page = 1;
+
+            order = this.value;
+            loadData();
+        });
+
+        /**
+         * When scrolled all the way to the bottom, add more tiles.
+         */
+        var onScroll = function (event) {
+            // Only check when we're not still waiting for data.
+            if (!isLoading) {
+                // Check if we're within 100 pixels of the bottom edge of the broser window.
+                var windowHeight = window.innerHeight ? window.innerHeight : $(window).height(), // iphone fix
+                    closeToBottom = ($(window).scrollTop() + windowHeight > $(document).height() - 100);
+                if (closeToBottom) {
+                    loadData();
+                }
+            }
+        };
+
+        /**
+         * Refreshes the layout.
+         */
+        var applyLayout = function () {
+            wookmarkOptions.container.imagesLoaded(function () {
+                // Create a new layout handler when images have loaded.
+                handler = tiles.find('li');
+                handler.wookmark(wookmarkOptions);
+            });
+        };
+
+        /**
+         * Loads data from the API.
+         */
+        var loadData = function () {
+            spinner.show();
+            isLoading = true;
+
+            var apiURL = API_URL + 'posts/';
+
+            var user = getUrlParameter('user');
+            if (user) {
+                apiURL = API_URL + 'users/' + user + '/posts/';
+            }
+
+            var approved;
+            var waitingApproval = getUrlParameter('waiting-approval');
+            if (waitingApproval) {
+                approved = 'False';
+            } else {
+                if (!user) {
+                    approved = 'True';
+                }
+            }
+
+            var postData = {
+                page: page,
+                search: search,
+                ordering: order,
+                approved: approved
+            };
+
+            $.ajax({
+                url: apiURL,
+                method: 'GET',
+                dataType: 'json',
+                data: postData, // Page parameters
+                success: onLoadData,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    spinner.hide();
+
+                    if (page === 1) {
+                        if (jqXHR.statusText === 'error') {
+                            tiles.html('Could not retrieve posts, please try again later!');
+                        } else {
+                            tiles.html(errorThrown);
+                        }
+                    }
+                }
+            });
+        };
+
+        /**
+         * Receives data from the API, creates HTML for images and updates the layout
+         */
+        var onLoadData = function (data, textStatus, jqXHR) {
+            if (data.results.length === 0) {
+                tiles.html('No posts found!');
+            }
+
+            // Increment page index for future calls.
+            ++page;
+
+            // Retrieve and fill HTML template for the posts.
+            var template = $('#post-tile').html();
+            var html = '';
+            var results = data.results;
+            $.each(results, function (index) {
+                var post = results[index];
+                var datetimeCreated = new Date(post.datetime_created);
+                var datetimeModified = new Date(post.datetime_modified);
+
+                var dateOptions = {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                };
+                var postCreatedDate = datetimeCreated.toLocaleTimeString('en-us', dateOptions);
+                var postModifiedDate = datetimeModified.toLocaleTimeString('en-us', dateOptions);
+
+                var postImage = '';
+                if (typeof post.images[0] !== 'undefined') {
+                    postImage = post.images[0].image;
+                }
+
+                var postApproved = '';
+                if (post.approved === false) {
+                    postApproved = 'Waiting approval!';
+                }
+
+                var post_data = {
+                    post_id: post.id,
+                    post_title: post.title,
+                    post_description: post.short_description,
+                    post_username: post.user.username,
+                    post_date_created: postCreatedDate,
+                    post_date_modified: postModifiedDate,
+                    post_comments_count: post.comments.length,
+                    post_likes: post.likes,
+                    post_dislikes: post.dislikes,
+                    post_approved: postApproved,
+                    post_image: postImage
+                };
+
+                html += Mustache.render(template, post_data);
+            });
+
+            spinner.hide();
+
+            // Add posts HTML to the page.
+            tiles.append(html);
+
+            // Set as loaded
+            isLoading = false;
+
+            // Apply layout.
+            applyLayout();
+        };
+
+        // Capture scroll event.
+        $(document).bind('scroll', onScroll);
+
+        // Load first data from the API.
+        loadData();
+
+        /* // Load Data Tiles */
+    }
+</script>
+<!-- // Page Scripts -->
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="images/fav-icon.ico"/>
+
+    <noscript>
+        <p>Your browser does not support JavaScript!</p>
+        <p>In order to consume our website you need to enable JavaScript, we are sorry for the inconvenience.</p>
+    </noscript>
+
+    <!-- jQuery -->
+    <script type="application/javascript" src="vendor/jquery/jquery-3.3.1.min.js"></script>
+
+    <div class="templates" template="head"></div>
+
+    <div class="templates" template="scripts"></div>
+</head>
+<body>
+<!-- Header -->
+<div class="templates" template="header"></div>
+<!-- // Header -->
+
+<!-- Content -->
+<div class="content">
+    <div class="wrap">
+        <div class="post2">
+            <div class="new-post-grids">
+                <div class="col_1_of_bottom span_1_of_first1">
+                    <h5>About Us</h5>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div>
+                <p>PArtesanato is a site that allows the sharing of various handicraft articles or ideas, so that a user can show his work to others in order to receive reviews so as to improve his products and techniques.</p>
+                <p>It's a free and non-advertising platform for no profit.</p>
+                <br />
+                <p>We hope you enjoy our platform as well as possible.</p>
+                <br />
+                <p>Thank you for choosing us !!</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- // Content -->
+
+<!-- Modals -->
+<div class="templates" template="modals"></div>
+<!-- // Modals -->
+
+<!-- Load Templates -->
+<script>
+    $(function () {
+        $('div.templates').each(function () {
+            $(this).load('templates/' + $(this).attr('template') + '.html');
+        });
+    });
+</script>
+<!-- // Load Templates -->
+</body>
+</html>

@@ -1,0 +1,188 @@
+<div id="modal_login" class="modal">
+    <form class="modal-content animate">
+        <div class="container">
+            <ul class="list3 submit_result"></ul>
+
+            <label><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="username" required/>
+
+            <label><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password" required/>
+
+            <button type="submit">Login</button>
+            <label>
+                <input type="checkbox" name="remember" checked/> Remember me
+            </label>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn" onclick="$('#modal_login').hide();">Cancel</button>
+            <span class="psw"><a href="http://127.0.0.1:8000/auth/password/reset/" target="_blank">Forgot password?</a></span>
+        </div>
+    </form>
+</div>
+
+<div id="modal_register" class="modal">
+    <form class="modal-content animate">
+        <div class="container">
+            <ul class="list3 submit_result"></ul>
+
+            <label><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="username" required/>
+
+            <label><b>E-Mail</b></label>
+            <input type="email" placeholder="Enter E-Mail" name="email" required/>
+
+            <label><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password" required/>
+
+            <label><b>Confirm Password</b></label>
+            <input type="password" placeholder="Enter Confirm Password" name="password2" required/>
+
+            <button type="submit">Register</button>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn" onclick="$('#modal_register').hide();">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div id="modal_profile" class="modal">
+    <form class="modal-content animate">
+        <div class="imgcontainer">
+            <a href="https://pt.gravatar.com/emails/" target="_blank" title="Edit Gravatar"><img id="profile_image"
+                                                                                                 class="avatar" src=""
+                                                                                                 alt="Avatar"/></a>
+            <div class="edit"><i class="fas fa-pencil-alt fa-lg"></i></div>
+        </div>
+
+        <div class="container">
+            <ul class="list3 submit_result"></ul>
+
+            <label for="profile_email"><b>Email Adress</b></label>
+            <input id="profile_email" type="email" name="email" required/>
+
+            <label for="profile_first_name"><b>First Name</b></label>
+            <input id="profile_first_name" type="text" name="first_name"/>
+
+            <label for="profile_last_name"><b>Last Name</b></label>
+            <input id="profile_last_name" type="text" name="last_name"/>
+
+            <button id="profile_update" type="submit">Update</button>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn" onclick="$('#modal_profile').hide();">Cancel</button>
+            <button id="logout_user" type="button" class="logoutbtn">Logout</button>
+            <a id="profile_posts" class="pointer">
+                <button type="button" class="postsbtn">My Posts</button>
+            </a>
+            <button type="button" class="passwordbtn" onclick="$('#modal_change_password').show();">Change Password
+            </button>
+        </div>
+    </form>
+</div>
+
+<div id="modal_change_password" class="modal">
+    <form class="modal-content animate">
+        <div class="container">
+            <ul class="list3 submit_result"></ul>
+
+            <label for="profile_old_password"><b>Old Password</b></label>
+            <input id="profile_old_password" type="password" name="old_password" required/>
+
+            <label for="profile_new_password"><b>New Password</b></label>
+            <input id="profile_new_password" type="password" name="new_password" required/>
+
+            <label for="profile_new_password2"><b>Password Confirm</b></label>
+            <input id="profile_new_password2" type="password" name="new_password2" required/>
+
+            <button id="profile_change_password" type="submit">Change Password</button>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn" onclick="$('#modal_change_password').hide();">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<div id="modal_user_profile" class="modal">
+    <form class="modal-content animate">
+        <div class="imgcontainer">
+            <img id="user_profile_image" class="avatar" src="" alt="Avatar"/>
+        </div>
+
+        <div class="container">
+            <ul class="list3 submit_result"></ul>
+
+            <label><b>Account Status: </b><span id="user_profile_status"></span></label><br/><br/>
+
+            <label for="user_profile_username"><b>Username</b></label>
+            <input id="user_profile_username" type="text" name="email" readonly/>
+
+            <label for="user_profile_email"><b>Email Adress</b></label>
+            <input id="user_profile_email" type="email" name="email" required/>
+
+            <label for="user_profile_first_name"><b>First Name</b></label>
+            <input id="user_profile_first_name" type="text" name="first_name"/>
+
+            <label for="user_profile_last_name"><b>Last Name</b></label>
+            <input id="user_profile_last_name" type="text" name="last_name"/>
+
+            <button id="user_profile_update" type="submit">Update</button>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn" onclick="$('#modal_user_profile').hide();">Cancel</button>
+            <button id="user_profile_ban" class="banbtn is_admin" type="button">Ban User</button>
+            <button id="user_profile_unban" class="unbanbtn is_admin" type="button">Unban User</button>
+            <a id="user_profile_posts" class="pointer">
+                <button type="button" class="postsbtn">User Posts</button>
+            </a>
+        </div>
+    </form>
+</div>
+
+<div id="modal_post_edit" class="modal">
+    <form class="modal-content animate">
+        <div class="container">
+            <ul class="list3 submit_result"></ul>
+
+            <label for="post_edit_title"><b>Tiitle</b></label>
+            <input id="post_edit_title" type="text" name="title" required/>
+
+            <label for="post_edit_description"><b>Description</b></label>
+            <textarea id="post_edit_description" name="description" rows="6" required></textarea>
+
+            <label><b>Images</b></label>
+            <div class="modal-content-file">
+                <input id="post_edit_images" type="file" name="images[]" multiple/>
+                <output id="post_edit_images_list"></output>
+            </div>
+
+            <button id="post_edit_update" type="submit">Update</button>
+
+            <label><b>Remove Images</b></label>
+            <div id="post_edit_remove_images" class="modal-content-file"></div>
+        </div>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <button type="button" class="cancelbtn" onclick="$('#modal_post_edit').hide();">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Get the modal
+    var modal = $('#modal_login, #modal_register, #modal_profile, #modal_change_password, #modal_user_profile, #modal_post_edit');
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        $.each(modal, function () {
+            if (event.target === $(this)[0]) {
+                $(this).css('display', 'none');
+            }
+        });
+    }
+</script>

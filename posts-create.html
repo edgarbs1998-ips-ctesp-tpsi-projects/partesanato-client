@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="images/fav-icon.ico"/>
+
+    <noscript>
+        <p>Your browser does not support JavaScript!</p>
+        <p>In order to consume our website you need to enable JavaScript, we are sorry for the inconvenience.</p>
+    </noscript>
+
+    <!-- jQuery -->
+    <script type="application/javascript" src="vendor/jquery/jquery-3.3.1.min.js"></script>
+
+    <div class="templates" template="head"></div>
+
+    <div class="templates" template="scripts"></div>
+</head>
+<body>
+<!-- Header -->
+<div class="templates" template="header"></div>
+<!-- // Header -->
+
+<!-- Content -->
+<div class="content">
+    <div class="wrap">
+        <div id="spinner" style="display: none;">
+            <div class="templates" template="spinner"></div>
+        </div>
+        <div class="post2">
+            <div class="new-post-grids">
+                <div class="col_1_of_bottom span_1_of_first1">
+                    <h5>Create New Post</h5>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <ul id="form-status" class="list3 submit_result"></ul>
+            <form id="post-form">
+                <div class="post-form">
+                    <div class="form-content">
+                        <input class="text" type="text" name="title" style="width: 97.7%;" placeholder="Title..."/>
+                    </div>
+                    <div class="form-content2">
+                        <textarea name="description" placeholder="Description..."></textarea>
+                    </div>
+                    <div class="form-content3" style="width: 97.7%;">
+                        <label>Images (upload multiple files):</label>
+                        <input id="images" type="file" name="images[]" multiple/>
+                        <output id="images_list"></output>
+                    </div>
+                    <span><input id="submit" type="submit" value="Submit"></span>
+                    <div class="clear"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- // Content -->
+
+<!-- Modals -->
+<div class="templates" template="modals"></div>
+<!-- // Modals -->
+
+<!-- Load Templates -->
+<script>
+    $(function () {
+        $('div.templates').each(function () {
+            $(this).load('templates/' + $(this).attr('template') + '.html');
+        });
+    });
+</script>
+<!-- // Load Templates -->
+
+<!-- Page Scripts -->
+<script>
+    var alreadyExecuted = false;
+
+    $(document).ajaxStop(function () {
+        setTimeout(pageScripts, 1000);
+    });
+
+    function pageScripts() {
+        if (alreadyExecuted) {
+            return;
+        }
+        alreadyExecuted = true;
+
+        // Variables
+        var spinner = $("#spinner"),
+            apiURL = API_URL + 'posts/';
+
+        // Load Thumbs
+        $("#images").change(function (e) {
+            loadThumbs(e, $('#images_list'));
+        });
+
+        // Handle Post Submit
+        $("#post-form").submit(function (e) {
+            e.preventDefault();
+
+            spinner.show();
+
+            var submitResult = $("#form-status");
+            var postData = {
+                title: $("input[name=title]").val(),
+                description: $("textarea[name=description]").val()
+            };
+
+            submitResult.html('');
+
+            $.ajax({
+                url: apiURL,
+                method: 'POST',
+                dataType: 'json',
+                data: postData,
+                success: function (data, textStatus, jqXHR) {
+                    var msg = 'Post created with success!';
+                    displaySubmitSuccess(msg, submitResult);
+
+                    uploadImages(data.id, $("input#images"));
+
+                    $("#post-form").find("input[type=text], input[type=file], textarea").val("");
+                    $("#images_list").html("");
+
+                    spinner.hide();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR, textStatus, errorThrown);
+
+                    displaySubmitResult(jqXHR.responseJSON, submitResult);
+
+                    spinner.hide();
+                }
+            });
+        });
+    }
+</script>
+<!-- // Page Scripts -->
+</body>
+</html>
